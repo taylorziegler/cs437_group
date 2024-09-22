@@ -24,7 +24,7 @@ class Motor():
             power = int(power /2 ) + 50
         power = power
 
-        direction = direction if not self._is_reversed else not direction  
+        direction = direction if not self._is_reversed else not direction
         self.dir_pin.value(direction)
             
         self.pwm_pin.pulse_width_percent(power)
