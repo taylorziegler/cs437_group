@@ -31,8 +31,8 @@ def A_star(map, origin, target):
     # visited nodes
     visited_set = set()
 
-    # Define possible actions (up, down, left, right)
-    actions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
+    # Define possible actions (up, down, left, right, upperleft, upperright, lowerleft, lowerright)
+    actions = [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, -1), (1, 1)]
 
     while queue:
         # Sort the open list by f value, and pop the node with the lowest f value
@@ -72,8 +72,9 @@ def A_star(map, origin, target):
                 # If the next_node is not in the queue or has a smaller g value, add it
                 add = True
                 for unvisited_node in queue:
-                    if unvisited_node.coor == next_node.coor and unvisited_node.g < next_node.g:
+                    if unvisited_node.coor == next_node.coor:
                         add = False
+                        unvisited_node.g = min(unvisited_node.g, next_node.g)
                         break
                 if add:
                     queue.append(next_node)
@@ -98,16 +99,18 @@ def visualize_path(map, path):
 # Example Usage
 if __name__ == "__main__":
     # Example map as a numpy array: 0 is free space, 1 is an obstacle
-    map = np.array([
-        [0, 1, 0, 0, 0],
-        [0, 1, 0, 1, 0],
-        [0, 0, 0, 1, 0],
-        [0, 1, 1, 1, 0],
-        [0, 0, 0, 0, 0]
-    ])
+    # map = np.array([
+    #     [0, 1, 0, 0, 0],
+    #     [0, 1, 0, 1, 0],
+    #     [0, 0, 0, 1, 0],
+    #     [0, 1, 1, 1, 0],
+    #     [0, 0, 0, 0, 0]
+    # ])
+    map = np.load("irregular_matrix_with_obstacles.npy")
 
-    origin = (0, 0)  # origin coor
-    target = (4, 4)    # Goal coor
+    origin = (99, 49)  # origin coor
+    target = (99, 49)    # Goal coor
+    print(map[target])
 
     path = A_star(map, origin, target)
 
