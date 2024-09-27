@@ -3,7 +3,7 @@ import numpy as np
 import sys
 from PIL import Image
 import cv2
-
+import matplotlib.pyplot as plt
 
 speed = 0
 
@@ -16,25 +16,30 @@ def scan_surroundings(angle): # half of angle we want surveyed
     print(angles)
     print(angle_dist)
 
+    x_coor = []
+    y_coor = []
     surrounding_map = np.zeros((100, 100), np.uint8)
     for i in range(len(angles)):
         r, theta = angle_dist[i], angles[i]
-        y, x = int(r * np.sin(np.radians(theta)))+50, int(r * np.cos(np.radians(theta)))
+        print(r, theta)
+        y, x = int(r * np.sin((theta+90)/180*np.pi))//2, int(r * np.cos((theta+90)/180*np.pi))//2
+        print(y, x)
+        x = x + 49
+        y = 99- y
+        x_coor.append(x)
+        y_coor.append(y)
         if (0 <= x < 100 and 0 <= y < 100):
-            surrounding_map[99-x][y] = 1
-    print(surrounding_map)
-    kernel = np.ones((9, 9), np.uint8)  # 5x5 kernel for dilation
+            surrounding_map[y][x] = 1
+    plt.scatter(x_coor, y_coor)
+    plt.show
+    # print(surrounding_map)
+    kernel = np.ones((5, 5), np.uint8)  # 5x5 kernel for dilation
     padded_map = cv2.dilate(surrounding_map, kernel)
 
-    # array_image = (1-surrounding_map)*255
-    # img = Image.fromarray(array_image.astype(np.uint8), mode='L')
-    # img.save('img.png')
-    # img.show()
-
-    # array_image = (1-padded_map)*255
-    # img = Image.fromarray(array_image.astype(np.uint8), mode='L')
-    # img.save('padded_img.png')
-    # img.show()
+    array_image = (1-padded_map)*255
+    img = Image.fromarray(array_image.astype(np.uint8), mode='L')
+    img.save('padded_img.png')
+    img.show()
 
     return padded_map
 
